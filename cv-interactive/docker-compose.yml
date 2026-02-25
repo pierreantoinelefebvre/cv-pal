@@ -1,0 +1,16 @@
+version: "3.9"
+
+services:
+  cv-interactive:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cv-pa-lefebvre
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    environment:
+      - NGINX_HOST=localhost
+    # Optional: mount for custom env
+    # env_file:
+    #   - .env
