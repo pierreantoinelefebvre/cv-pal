@@ -15,9 +15,16 @@ import { NODE_TYPES } from "../data/constants";
  * - Badges d'execution (checkmark / pulsing)
  * - Boites de groupe pour les missions consultant
  * - Barre de statut d'execution en bas
+ *
+ * Mobile : layout vertical (colonne unique, scroll bas)
+ * Desktop : layout horizontal 2 lignes + drag-to-pan
  */
 export default function CanvasView({ onBack, onSelectExperience }) {
   const containerRef = useRef(null);
+  // Drag-to-pan (desktop)
+  const isDragging = useRef(false);
+  const dragStart = useRef({ x: 0, y: 0, scrollLeft: 0, scrollTop: 0 });
+
   const { cv, ui } = useI18n();
   const { isMobile } = useWindowSize();
 
@@ -52,40 +59,39 @@ export default function CanvasView({ onBack, onSelectExperience }) {
   }, [cv.experienceGroups]);
 
   // ── Dimensions ──
-  const nodeW = isMobile ? 200 : 240;
+  const nodeW = isMobile ? 300 : 240;
   const nodeH = isMobile ? 90 : 100;
-  const gapX = isMobile ? 80 : 140;
-  const gapY = isMobile ? 140 : 180;
-  const cols = isMobile ? 1 : 2;
-
-  // Special nodes (Start / End)
-  const specialW = isMobile ? 130 : 160;
+  const gapX = 140; // horizontal gap (desktop only)
+  const gapY = isMobile ? 36 : 180;
+  const specialW = isMobile ? 150 : 160;
   const specialH = isMobile ? 60 : 70;
+  const startY = isMobile ? 60 : 120;
+  const windowW = typeof window !== "undefined" ? window.innerWidth : 800;
 
-  const startY = 120;
+  // Mobile: nodes centred horizontally
+  const mobilePad = Math.max(20, (windowW - nodeW) / 2);
+  const mobileCenter = windowW / 2;
 
-  // Experience grid dimensions
+  // Desktop layout (2-row grid, horizontal flow)
+  const cols = 2;
   const totalExpCols = Math.ceil(nodes.length / cols);
   const expGridW =
     totalExpCols > 0 ? (totalExpCols - 1) * (nodeW + gapX) + nodeW : nodeW;
-
-  // Total workflow width (start + gap + experiences + gap + end)
   const totalWorkflowW = specialW + gapX + expGridW + gapX + specialW;
-  const windowW = typeof window !== "undefined" ? window.innerWidth : 800;
   const workflowStartX = Math.max(60, windowW / 2 - totalWorkflowW / 2);
-
-  // Experience nodes start after the Start node
   const expStartX = workflowStartX + specialW + gapX;
+  const centerY = startY + nodeH + gapY / 2;
 
-  // Vertical center for special nodes (centered between 2 rows, or on single row)
-  const centerY =
-    cols === 2 ? startY + nodeH + gapY / 2 : startY + nodeH / 2;
-
-  // Start node position
-  const startNodePos = { x: workflowStartX, y: centerY - specialH / 2 };
-
-  // Experience node positions
+  // ── Node position ──
+  // Mobile  : single vertical column, nodes stacked top-to-bottom
+  // Desktop : 2-row grid, nodes flow left-to-right
   const getNodePos = (index) => {
+    if (isMobile) {
+      return {
+        x: mobilePad,
+        y: startY + specialH + gapY + index * (nodeH + gapY),
+      };
+    }
     const col = Math.floor(index / cols);
     const row = index % cols;
     return {
@@ -94,57 +100,98 @@ export default function CanvasView({ onBack, onSelectExperience }) {
     };
   };
 
-  // End node position
+  // ── Special node positions ──
+  const startNodePos = isMobile
+    ? { x: mobileCenter - specialW / 2, y: startY }
+    : { x: workflowStartX, y: centerY - specialH / 2 };
+
   const lastExpPos =
     nodes.length > 0
       ? getNodePos(nodes.length - 1)
+      : isMobile
+      ? { x: mobilePad, y: startY + specialH + gapY }
       : { x: expStartX, y: startY };
-  const endNodePos = {
-    x: lastExpPos.x + nodeW + gapX,
-    y: centerY - specialH / 2,
-  };
 
-  // Canvas dimensions
-  const canvasW = Math.max(endNodePos.x + specialW + 80, 800);
-  const canvasH = startY * 2 + cols * (nodeH + gapY) + 60;
+  const endNodePos = isMobile
+    ? {
+        x: mobileCenter - specialW / 2,
+        y: lastExpPos.y + nodeH + gapY,
+      }
+    : {
+        x: lastExpPos.x + nodeW + gapX,
+        y: centerY - specialH / 2,
+      };
 
-  // ── Connections (Start -> experiences -> End) ──
+  // ── Canvas dimensions ──
+  const canvasW = isMobile
+    ? Math.max(windowW, 360)
+    : Math.max(endNodePos.x + specialW + 80, 800);
+
+  const canvasH = isMobile
+    ? endNodePos.y + specialH + 80
+    : startY * 2 + cols * (nodeH + gapY) + 60;
+
+  // ── Connections ──
   const allConnections = [];
 
-  // Start -> first experience
   if (nodes.length > 0) {
     const firstPos = getNodePos(0);
-    allConnections.push({
-      x1: startNodePos.x + specialW,
-      y1: startNodePos.y + specialH / 2,
-      x2: firstPos.x,
-      y2: firstPos.y + nodeH / 2,
-    });
+    allConnections.push(
+      isMobile
+        ? {
+            x1: startNodePos.x + specialW / 2,
+            y1: startNodePos.y + specialH,
+            x2: firstPos.x + nodeW / 2,
+            y2: firstPos.y,
+          }
+        : {
+            x1: startNodePos.x + specialW,
+            y1: startNodePos.y + specialH / 2,
+            x2: firstPos.x,
+            y2: firstPos.y + nodeH / 2,
+          }
+    );
   }
 
-  // Between experience nodes
   for (let i = 0; i < nodes.length - 1; i++) {
     const from = getNodePos(i);
     const to = getNodePos(i + 1);
-    allConnections.push({
-      x1: from.x + nodeW,
-      y1: from.y + nodeH / 2,
-      x2: to.x,
-      y2: to.y + nodeH / 2,
-    });
+    allConnections.push(
+      isMobile
+        ? {
+            x1: from.x + nodeW / 2,
+            y1: from.y + nodeH,
+            x2: to.x + nodeW / 2,
+            y2: to.y,
+          }
+        : {
+            x1: from.x + nodeW,
+            y1: from.y + nodeH / 2,
+            x2: to.x,
+            y2: to.y + nodeH / 2,
+          }
+    );
   }
 
-  // Last experience -> End
   if (nodes.length > 0) {
-    allConnections.push({
-      x1: lastExpPos.x + nodeW,
-      y1: lastExpPos.y + nodeH / 2,
-      x2: endNodePos.x,
-      y2: endNodePos.y + specialH / 2,
-    });
+    allConnections.push(
+      isMobile
+        ? {
+            x1: lastExpPos.x + nodeW / 2,
+            y1: lastExpPos.y + nodeH,
+            x2: endNodePos.x + specialW / 2,
+            y2: endNodePos.y,
+          }
+        : {
+            x1: lastExpPos.x + nodeW,
+            y1: lastExpPos.y + nodeH / 2,
+            x2: endNodePos.x,
+            y2: endNodePos.y + specialH / 2,
+          }
+    );
   }
 
-  // Group rectangles
+  // ── Group rectangles ──
   const groupRects = groupBoxes.map((g) => {
     const sPos = getNodePos(g.startIdx);
     const ePos = getNodePos(g.endIdx);
@@ -155,6 +202,31 @@ export default function CanvasView({ onBack, onSelectExperience }) {
     const h = Math.max(sPos.y, ePos.y) + nodeH - y + pad + 8;
     return { ...g, x, y, w, h };
   });
+
+  // ── Drag-to-pan handlers (desktop) ──
+  const handleMouseDown = (e) => {
+    if (e.button !== 0 || !containerRef.current) return;
+    e.preventDefault();
+    isDragging.current = true;
+    dragStart.current = {
+      x: e.clientX,
+      y: e.clientY,
+      scrollLeft: containerRef.current.scrollLeft,
+      scrollTop: containerRef.current.scrollTop,
+    };
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging.current || !containerRef.current) return;
+    containerRef.current.scrollLeft =
+      dragStart.current.scrollLeft - (e.clientX - dragStart.current.x);
+    containerRef.current.scrollTop =
+      dragStart.current.scrollTop - (e.clientY - dragStart.current.y);
+  };
+
+  const handleMouseUp = () => {
+    isDragging.current = false;
+  };
 
   const ntStart = NODE_TYPES.start;
   const ntEnd = NODE_TYPES.end;
@@ -174,43 +246,44 @@ export default function CanvasView({ onBack, onSelectExperience }) {
         style={{
           pointerEvents: "auto",
           position: "fixed",
-          top: 20,
-          left: 20,
+          top: 16,
+          left: 16,
           zIndex: 50,
           background: "var(--bg-card)",
           border: "1px solid var(--border-subtle)",
           color: "var(--text-secondary)",
-          padding: "8px 16px",
+          padding: isMobile ? "6px 10px" : "8px 16px",
           borderRadius: 8,
           cursor: "pointer",
           fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 13,
+          fontSize: isMobile ? 12 : 13,
           transition: "all 0.2s",
           display: "flex",
           alignItems: "center",
           gap: 6,
         }}
       >
-        ← {ui.back}
+        ← {!isMobile && ui.back}
       </button>
 
       {/* Workflow title bar */}
       <div
         style={{
           position: "fixed",
-          top: 20,
+          top: 16,
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 50,
           display: "flex",
           alignItems: "center",
-          gap: 10,
-          padding: "8px 16px",
+          gap: 8,
+          padding: isMobile ? "6px 12px" : "8px 16px",
           background: "rgba(21,28,44,0.9)",
           border: "1px solid var(--border-subtle)",
           borderRadius: 10,
           backdropFilter: "blur(8px)",
-          maxWidth: "calc(100vw - 120px)",
+          maxWidth: isMobile ? "calc(100vw - 160px)" : "calc(100vw - 220px)",
+          overflow: "hidden",
         }}
       >
         <span
@@ -226,24 +299,30 @@ export default function CanvasView({ onBack, onSelectExperience }) {
         <span
           style={{
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 12,
+            fontSize: isMobile ? 10 : 12,
             color: "var(--text-secondary)",
             whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
           }}
         >
           {ui.workflowTitle}
         </span>
-        <span style={{ color: "var(--border-subtle)" }}>|</span>
-        <span
-          style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 11,
-            color: "var(--text-muted)",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {nodes.length} {ui.workflowNodes}
-        </span>
+        {!isMobile && (
+          <>
+            <span style={{ color: "var(--border-subtle)", flexShrink: 0 }}>|</span>
+            <span
+              style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 11,
+                color: "var(--text-muted)",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {nodes.length} {ui.workflowNodes}
+            </span>
+          </>
+        )}
       </div>
 
       {/* ══ Canvas ══ */}
@@ -251,13 +330,17 @@ export default function CanvasView({ onBack, onSelectExperience }) {
         className="canvas-container"
         ref={containerRef}
         style={{ pointerEvents: "auto" }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
         <div
           style={{
             width: canvasW,
             height: canvasH,
             position: "relative",
-            minWidth: "100vw",
+            minWidth: isMobile ? "100vw" : undefined,
             minHeight: "100dvh",
             paddingTop: 60,
           }}
@@ -292,7 +375,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 13,
+                    fontSize: isMobile ? 11 : 13,
                     fontWeight: 600,
                     color: "var(--accent)",
                     letterSpacing: "0.04em",
@@ -326,7 +409,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
             }}
           >
             <defs>
-              {/* Arrowhead marker */}
+              {/* Arrowhead marker — orient="auto" rotates for vertical paths too */}
               <marker
                 id="arrowhead"
                 markerWidth="10"
@@ -338,7 +421,6 @@ export default function CanvasView({ onBack, onSelectExperience }) {
               >
                 <path d="M0,1 L9,4 L0,7" fill="rgba(96,165,250,0.45)" />
               </marker>
-              {/* Glow filter for particles */}
               <filter id="particleGlow">
                 <feGaussianBlur stdDeviation="2" result="blur" />
                 <feMerge>
@@ -350,10 +432,14 @@ export default function CanvasView({ onBack, onSelectExperience }) {
 
             {allConnections.map((c, i) => {
               const midX = (c.x1 + c.x2) / 2;
-              const pathD = `M${c.x1},${c.y1} C${midX},${c.y1} ${midX},${c.y2} ${c.x2},${c.y2}`;
+              const midY = (c.y1 + c.y2) / 2;
+              // Mobile: vertical bezier (curves up/down)
+              // Desktop: horizontal bezier (curves left/right)
+              const pathD = isMobile
+                ? `M${c.x1},${c.y1} C${c.x1},${midY} ${c.x2},${midY} ${c.x2},${c.y2}`
+                : `M${c.x1},${c.y1} C${midX},${c.y1} ${midX},${c.y2} ${c.x2},${c.y2}`;
               return (
                 <g key={i}>
-                  {/* Connection line */}
                   <path
                     d={pathD}
                     fill="none"
@@ -361,7 +447,6 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                     strokeWidth="2"
                     markerEnd="url(#arrowhead)"
                   />
-                  {/* Animated flow particle */}
                   <circle
                     r="3"
                     fill="#60a5fa"
@@ -408,13 +493,13 @@ export default function CanvasView({ onBack, onSelectExperience }) {
               }}
             />
 
-            {/* Output port (right side only) */}
+            {/* Output port — mobile: bottom-center, desktop: right-center */}
             <div
               style={{
                 position: "absolute",
-                right: -6,
-                top: "50%",
-                transform: "translateY(-50%)",
+                ...(isMobile
+                  ? { bottom: -6, left: "50%", transform: "translateX(-50%)" }
+                  : { right: -6, top: "50%", transform: "translateY(-50%)" }),
                 width: 12,
                 height: 12,
                 borderRadius: "50%",
@@ -459,19 +544,8 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                 gap: 3,
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill={ntStart.color}
-                >
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill={ntStart.color}>
                   <path d="M8 5v14l11-7z" />
                 </svg>
                 <span
@@ -528,13 +602,13 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                   contain: "layout style",
                 }}
               >
-                {/* Input port (left) */}
+                {/* Input port — mobile: top-center, desktop: left-center */}
                 <div
                   style={{
                     position: "absolute",
-                    left: -6,
-                    top: "50%",
-                    transform: "translateY(-50%)",
+                    ...(isMobile
+                      ? { top: -6, left: "50%", transform: "translateX(-50%)" }
+                      : { left: -6, top: "50%", transform: "translateY(-50%)" }),
                     width: 12,
                     height: 12,
                     borderRadius: "50%",
@@ -544,13 +618,13 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                   }}
                 />
 
-                {/* Output port (right) */}
+                {/* Output port — mobile: bottom-center, desktop: right-center */}
                 <div
                   style={{
                     position: "absolute",
-                    right: -6,
-                    top: "50%",
-                    transform: "translateY(-50%)",
+                    ...(isMobile
+                      ? { bottom: -6, left: "50%", transform: "translateX(-50%)" }
+                      : { right: -6, top: "50%", transform: "translateY(-50%)" }),
                     width: 12,
                     height: 12,
                     borderRadius: "50%",
@@ -748,13 +822,13 @@ export default function CanvasView({ onBack, onSelectExperience }) {
               }}
             />
 
-            {/* Input port (left side only) */}
+            {/* Input port — mobile: top-center, desktop: left-center */}
             <div
               style={{
                 position: "absolute",
-                left: -6,
-                top: "50%",
-                transform: "translateY(-50%)",
+                ...(isMobile
+                  ? { top: -6, left: "50%", transform: "translateX(-50%)" }
+                  : { left: -6, top: "50%", transform: "translateY(-50%)" }),
                 width: 12,
                 height: 12,
                 borderRadius: "50%",
@@ -776,13 +850,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                 gap: 3,
               }}
             >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 6,
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span style={{ fontSize: 14 }}>🏁</span>
                 <span
                   style={{
@@ -795,13 +863,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                   {ui.workflowEnd}
                 </span>
               </div>
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 4,
-                }}
-              >
+              <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
                 <span
                   style={{
                     width: 6,
@@ -840,14 +902,14 @@ export default function CanvasView({ onBack, onSelectExperience }) {
           zIndex: 50,
           display: "flex",
           alignItems: "center",
-          gap: 10,
-          padding: "8px 18px",
+          gap: isMobile ? 6 : 10,
+          padding: isMobile ? "6px 12px" : "8px 18px",
           background: "rgba(21,28,44,0.95)",
           border: "1px solid var(--border-subtle)",
           borderRadius: 10,
           backdropFilter: "blur(8px)",
           fontFamily: "'JetBrains Mono', monospace",
-          fontSize: 11,
+          fontSize: isMobile ? 10 : 11,
           maxWidth: "calc(100vw - 40px)",
         }}
       >
@@ -868,10 +930,14 @@ export default function CanvasView({ onBack, onSelectExperience }) {
         <span style={{ color: "var(--text-muted)", whiteSpace: "nowrap" }}>
           {nodes.length} {ui.workflowNodes}
         </span>
-        <span style={{ color: "var(--border-subtle)" }}>|</span>
-        <span style={{ color: "var(--text-muted)", whiteSpace: "nowrap" }}>
-          2014 → {ui.workflowNow}
-        </span>
+        {!isMobile && (
+          <>
+            <span style={{ color: "var(--border-subtle)" }}>|</span>
+            <span style={{ color: "var(--text-muted)", whiteSpace: "nowrap" }}>
+              2014 → {ui.workflowNow}
+            </span>
+          </>
+        )}
       </div>
     </div>
   );
