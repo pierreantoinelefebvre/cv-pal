@@ -8,13 +8,26 @@ export default function ExperienceDrawer({ experience, onClose }) {
   return (
     <>
       <div className="drawer-overlay" onClick={onClose} />
-      <div className="drawer">
+      <div
+        style={{
+          position: "fixed",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          zIndex: 101,
+          width: "min(600px, 90vw)",
+          maxHeight: "90vh",
+          overflow: "auto",
+          background: "var(--bg-secondary)",
+          border: "1px solid var(--border-subtle)",
+          borderRadius: 16,
+          animation: "scaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+          willChange: "transform",
+        }}
+      >
         {/* Header */}
         <div
           style={{
-            position: "sticky",
-            top: 0,
-            zIndex: 2,
             background: "var(--bg-secondary)",
             borderBottom: "1px solid var(--border-subtle)",
             padding: "16px 24px",
@@ -200,7 +213,7 @@ function PayloadBlock({ label, color, content, delay }) {
         </span>
       </div>
       <div style={{ padding: 14 }}>
-        <p style={{ fontSize: 13.5, lineHeight: 1.65, color: "var(--text-secondary)" }}>
+        <p style={{ fontSize: 13.5, lineHeight: 1.65, color: "var(--text-secondary)", whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
           {content}
         </p>
       </div>

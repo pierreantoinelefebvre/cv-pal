@@ -28,7 +28,7 @@ export const UI_EN = {
   consultantGroup: "Consultant Missions — Codeploy Sàrl, Lausanne",
   consultantPeriod: "09.2019 – Present",
   consultantDesc: "IT consulting, design & integration for luxury brands",
-  switchLang: "FR",
+  switchLang: "EN",
   menuNodes: {
     about: "About",
     skills: "Skills",
@@ -47,6 +47,8 @@ export const CV_EN = {
     email: "pierreantoine.lefebvre@gmail.com",
     phone: "+41 76 395 59 53",
     location: "Lausanne, Switzerland",
+    address: "Avenue d'Echallens 34, 1004 Lausanne",
+    permit: "Work permit: B",
     linkedin: "https://linkedin.com/in/pierre-antoine-lefebvre/",
   },
   about: {
@@ -60,6 +62,23 @@ export const CV_EN = {
       "Technical training",
       "360° strategic vision",
     ],
+    coreCompetencies: {
+      title: "CORE COMPETENCIES",
+      items: [
+        "Proven experience of nearly 15 years in IT as an IT Architect (Solution, Enterprise, or IS)",
+        "Experience in team management for over 6 years (up to 30 employees)",
+        "Demonstrated ability to develop a solution architecture strategy and implement transformation programs",
+        "Solid experience in project management from analysis to design",
+        "Proven track record in systems analysis and enterprise architecture, with the ability to design and implement innovative solutions to optimize performance and strengthen operational efficiency",
+        "Expertise in cloud management, data migration, and implementation of SaaS solutions",
+        "Delivering technical training for internal teams",
+        "Proven ability to build trusted relationships with diverse stakeholders (external providers, suppliers, freelancers, agencies, etc.)",
+        "Proactive technology watch to stay up to date on trends and innovations",
+        "Leadership and team spirit fostering collaboration and collective performance",
+        "Excellent analytical and synthesis skills to process complex information and extract what is essential",
+        "360° strategic vision, resilience and great ability to adapt to change"
+      ]
+    },
   },
   skills: {
     "E-commerce": ["Salesforce Commerce Cloud (SFCC)", "SCAPI / OCAPI", "Magento 2", "Global-e"],
@@ -103,7 +122,7 @@ export const CV_EN = {
       period: "01.2014 – 05.2016",
       company: "Itelios, France",
       input: "Career start in Salesforce Commerce Cloud development.",
-      processing: "SFCC development. Skills advancement. Salesforce certifications acquisition.",
+      processing: "• SFCC development\n• Skills advancement\n• Acquisition of Salesforce certifications",
       output: "SFCC expertise acquired. Dual Salesforce B2C certification (Developer + Architect).",
     },
     {
@@ -115,8 +134,7 @@ export const CV_EN = {
       period: "05.2016 – 05.2017",
       company: "Capgemini, France",
       input: "Developing the SFCC offering at Capgemini. Yellowkorner.com TMA.",
-      processing:
-        "TMA takeover and optimization. SFCC offering development. CIAM cartridge design for ReachFive.",
+      processing: "• Takeover and optimization of Third-Party Application Maintenance (TMA) for Yellowkorner.com on Salesforce B2C Commerce\n• Development of the Salesforce Commerce Cloud offering at Capgemini\n• Design and certification of the CIAM cartridge for partner ReachFive",
       output: "Structured SFCC offering. Certified CIAM cartridge. Optimized TMA.",
     },
     {
@@ -128,8 +146,7 @@ export const CV_EN = {
       period: "06.2016 – 06.2018",
       company: "OSF Group, France",
       input: "Celine.com development and supervision. PIM need and ERP interfacing.",
-      processing:
-        "Celine.com development supervision. Excel PIM with macros for SFCC XML. Cegid Y2 specifications.",
+      processing: "• Supervising development for the Celine.com and courseu.com website\n• Creation of a PIM on Excel with macros for Salesforce B2C Commerce XML generation\n• Writing technical specifications for interfacing with Cegid Y2",
       output: "Operational site. Functional PIM. ERP interfacing implemented.",
     },
     {
@@ -141,8 +158,7 @@ export const CV_EN = {
       period: "06.2018 – 08.2019",
       company: "Pierre Fabre Group, France",
       input: "Deploying a new e-commerce site for Poland and a loyalty program.",
-      processing:
-        "Dev team management. SFCC Dermo Cosme Shop development. Python loyalty program on Kubernetes.",
+      processing: "• Managing development teams and writing technical specifications\n• Development and deployment of the Salesforce B2C Commerce Dermo Cosme Shop site for Poland\n• Design and deployment of a loyalty program in Python on a Kubernetes (K8S) infrastructure",
       output: "E-commerce site deployed. Loyalty program operational on K8S.",
     },
     {
@@ -160,8 +176,7 @@ export const CV_EN = {
           period: "09.2019 – 12.2020",
           company: "Codeploy Sàrl → Happychic (Fashion Cube)",
           input: "Digital transformation for Fashion Cube group (Jules, Brice, Bizzbee).",
-          processing:
-            "IS overhaul. API platform. Storeland ERP + WSO2 integration. Migration to SFRA with Core Model.",
+          processing: "• Overhaul of IS tools and support for digital transformation\n• Development of an API platform for interconnection with Fashion Cube group brands\n• Integration with Storeland ERP and WSO2 API Manager\n• Migration of Jules, Brice, and Bizzbee sites to SFRA with the implementation of a Core Model\n• Technical support for SFCC teams and platform training",
           output: "Digital transformation achieved. Core Model deployed. Teams trained.",
         },
         {
@@ -173,8 +188,7 @@ export const CV_EN = {
           period: "01.2021 – 01.2022",
           company: "Codeploy Sàrl → La Grande Épicerie / Le Bon Marché",
           input: "Sites migration needed from SiteGenesis.",
-          processing:
-            "Migration to SFRA. Technical estimation for 'Les Listes d'exception'. Ingenico PSP implementation.",
+          processing: "• Migration of La Grande Epicerie and Le Bon Marché websites from SiteGenesis to SFRA\n• Technical estimation and scoping for the 'Les Listes d'exception' project\n• Supervising developments and validating deliverables\n• Implementation of Ingenico PSP (technical scoping and integration)",
           output: "Sites migrated to SFRA. Ingenico PSP integrated. Deliverables validated.",
         },
         {
@@ -186,10 +200,8 @@ export const CV_EN = {
           period: "01.2021 – 12.2022",
           company: "Codeploy Sàrl → Tag Heuer",
           input: "SFCC platform requiring audit and global architecture strategy.",
-          processing:
-            "Developer and lead developer supervision. SFCC architecture strategy design. Full platform audit.",
-          output:
-            "Architecture strategy defined. Structured team. Audited platform with improvement plan.",
+          processing: "• Supervision of developers and lead developers\n• Design of the architecture strategy for SFCC and other IS components\n• Audit of the SFCC platform",
+          output: "Architecture strategy defined. Structured team. Audited platform with improvement plan.",
         },
         {
           id: "node_lvmh",
@@ -200,10 +212,8 @@ export const CV_EN = {
           period: "12.2022 – 08.2025",
           company: "Codeploy Sàrl → LVMH Beauty Tech",
           input: "Silos between Houses (Dior, Guerlain, Benefit, Make Up For Ever). Need for standardization.",
-          processing:
-            "Technical audit of SFCC platforms. Cross-functional solution architecture design. Beauty Tech Core supervision. Technical roadmap contribution.",
-          output:
-            "Standardized e-commerce solutions. Common components deployed. Sustainable architecture for Houses.",
+          processing: "• Technical audit of Salesforce B2C Commerce platforms for the Guerlain and Dior e-commerce sites\n• Design of solution architectures for the Benefit Cosmetics and Make Up For Ever brands\n• Supervising Beauty Tech Core teams on the development of common components\n• Contribution to the technical roadmap and standardization of e-commerce solutions",
+          output: "Standardized e-commerce solutions. Common components deployed. Sustainable architecture for Houses.",
         },
         {
           id: "node_sdg",
@@ -214,10 +224,8 @@ export const CV_EN = {
           period: "06.2024 – 01.2025",
           company: "Codeploy Sàrl → SDG Distribution",
           input: "Aging information system requiring a complete overhaul.",
-          processing:
-            "IS overhaul and target architecture definition. Inter-application flows. API interfacing and ETL integration (Pentaho). Dev team steering.",
-          output:
-            "New structured and scalable IS. Automated flows. Documented technical specifications.",
+          processing: "• Complete overhaul of the information system and definition of the target architecture\n• Implementation of data flows between different application components\n• API Interfacing and systems integration via ETL (Pentaho)\n• Steering the development team and project monitoring\n• Writing technical specifications and carrying out targeted development tasks",
+          output: "New structured and scalable IS. Automated flows. Documented technical specifications.",
         },
         {
           id: "node_celine",
@@ -228,10 +236,8 @@ export const CV_EN = {
           period: "03.2025 – Present",
           company: "Codeploy Sàrl → Celine.com (LVMH)",
           input: "Need to migrate to a composable hybrid architecture for Celine.com (LVMH Group).",
-          processing:
-            "Guiding and training technical teams. Defining integration principles and inter-application flows. Guarantor of technical consistency.",
-          output:
-            "Operational composable hybrid architecture. Teams trained and autonomous on new paradigms.",
+          processing: "• Guiding and training technical teams on the implementation of a composable hybrid architecture\n• Defining integration principles and inter-application flows\n• Guarantor of technical consistency and performance of deployed solutions",
+          output: "Operational composable hybrid architecture. Teams trained and autonomous on new paradigms.",
         },
       ],
     },

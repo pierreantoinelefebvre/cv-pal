@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback } from "react";
 import { useI18n } from "../hooks/useI18n";
 import { useWindowSize } from "../hooks/useWindowSize";
 
@@ -12,9 +12,19 @@ export default function SectionPanel({ section, onClose }) {
     languages: ui.sectionLanguages,
   };
 
+  const handleBackdropClick = useCallback((e) => {
+    if (e.target.className === "section-overlay") onClose();
+  }, [onClose]);
+
   return (
-    <div className="section-overlay" onClick={onClose}>
-      <div className="section-content" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="section-overlay"
+      onClick={handleBackdropClick}
+    >
+      <div
+        className="section-content"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div
           style={{
@@ -52,6 +62,14 @@ export default function SectionPanel({ section, onClose }) {
               justifyContent: "center",
               transition: "all 0.2s",
             }}
+            onMouseEnter={(e) => {
+              e.target.style.background = "var(--border-subtle)";
+              e.target.style.color = "var(--text-primary)";
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = "none";
+              e.target.style.color = "var(--text-secondary)";
+            }}
           >
             ✕
           </button>
@@ -66,11 +84,10 @@ export default function SectionPanel({ section, onClose }) {
   );
 }
 
-/* ─── About ─────────────────────────────────────────── */
 function AboutContent({ cv }) {
   const { isMobile } = useWindowSize();
   return (
-    <div style={{ animation: "fadeIn 0.4s ease" }}>
+    <div>
       <p
         style={{
           fontSize: 15,
@@ -98,7 +115,7 @@ function AboutContent({ cv }) {
               borderRadius: 8,
               fontSize: 13,
               color: "var(--text-primary)",
-              animation: `fadeIn 0.4s ease ${i * 0.05}s both`,
+              contain: "layout style",
             }}
           >
             <span style={{ color: "var(--green)", marginRight: 6 }}>▸</span>
@@ -107,7 +124,66 @@ function AboutContent({ cv }) {
         ))}
       </div>
 
-      {/* Contact info */}
+      {cv.about.coreCompetencies && (
+        <div
+          style={{
+            marginTop: 24,
+            padding: 16,
+            background: "rgba(96,165,250,0.05)",
+            borderRadius: 10,
+            border: "1px solid rgba(96,165,250,0.1)",
+            contain: "layout style",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "'JetBrains Mono', monospace",
+              fontSize: 12,
+              color: "var(--accent)",
+              marginBottom: 12,
+              letterSpacing: "0.04em",
+              textTransform: "uppercase",
+              fontWeight: 600,
+            }}
+          >
+            {cv.about.coreCompetencies.title}
+          </p>
+          <ul
+            style={{
+              listStyle: "none",
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+            }}
+          >
+            {cv.about.coreCompetencies.items.map((item, i) => (
+              <li
+                key={i}
+                style={{
+                  fontSize: 13,
+                  lineHeight: 1.6,
+                  color: "var(--text-secondary)",
+                  paddingLeft: 16,
+                  position: "relative",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    left: 0,
+                    color: "var(--accent)",
+                    fontWeight: 600,
+                  }}
+                >
+                  ▸
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div
         style={{
           marginTop: 24,
@@ -137,6 +213,16 @@ function AboutContent({ cv }) {
           <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
             📍 {cv.profile.location}
           </span>
+          {cv.profile.address && (
+            <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+              📬 {cv.profile.address}
+            </span>
+          )}
+          {cv.profile.permit && (
+            <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+              🆔 {cv.profile.permit}
+            </span>
+          )}
           <a
             href={cv.profile.linkedin}
             target="_blank"
@@ -151,12 +237,11 @@ function AboutContent({ cv }) {
   );
 }
 
-/* ─── Skills ────────────────────────────────────────── */
 function SkillsContent({ cv }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      {Object.entries(cv.skills).map(([cat, items], ci) => (
-        <div key={cat} style={{ animation: `fadeIn 0.4s ease ${ci * 0.06}s both` }}>
+      {Object.entries(cv.skills).map(([cat, items]) => (
+        <div key={cat}>
           <p
             style={{
               fontFamily: "'JetBrains Mono', monospace",
@@ -182,7 +267,6 @@ function SkillsContent({ cv }) {
   );
 }
 
-/* ─── Education ─────────────────────────────────────── */
 function EducationContent({ cv, ui }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -194,7 +278,7 @@ function EducationContent({ cv, ui }) {
             background: "var(--bg-elevated)",
             border: "1px solid var(--border-subtle)",
             borderRadius: 10,
-            animation: `fadeIn 0.4s ease ${i * 0.1}s both`,
+            contain: "layout style",
           }}
         >
           <p style={{ fontSize: 15, fontWeight: 600, color: "var(--text-primary)", marginBottom: 4 }}>
@@ -240,7 +324,7 @@ function EducationContent({ cv, ui }) {
               borderRadius: 8,
               fontSize: 13,
               color: "var(--green)",
-              animation: `fadeIn 0.4s ease ${(i + 2) * 0.1}s both`,
+              contain: "layout style",
             }}
           >
             ✓ {c}
@@ -251,14 +335,7 @@ function EducationContent({ cv, ui }) {
   );
 }
 
-/* ─── Languages ─────────────────────────────────────── */
 function LanguagesContent({ cv }) {
-  const [animated, setAnimated] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setAnimated(true), 200);
-    return () => clearTimeout(t);
-  }, []);
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       {cv.languages.map((l, i) => (
@@ -269,7 +346,7 @@ function LanguagesContent({ cv }) {
             background: "var(--bg-elevated)",
             border: "1px solid var(--border-subtle)",
             borderRadius: 10,
-            animation: `fadeIn 0.4s ease ${i * 0.1}s both`,
+            contain: "layout style",
           }}
         >
           <div
@@ -295,7 +372,7 @@ function LanguagesContent({ cv }) {
             <div
               className="lang-fill"
               style={{
-                width: animated ? `${l.pct}%` : "0%",
+                width: `${l.pct}%`,
                 background: `linear-gradient(90deg, var(--accent), ${l.pct === 100 ? "var(--green)" : "var(--purple)"})`,
               }}
             />

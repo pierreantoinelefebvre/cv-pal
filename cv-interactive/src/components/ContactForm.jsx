@@ -267,6 +267,14 @@ export default function ContactForm({ onClose }) {
             >
               📞 {cv.profile.phone}
             </a>
+            <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+              📬 {cv.profile.address || cv.profile.location}
+            </span>
+            {cv.profile.permit && (
+              <span style={{ fontSize: 13, color: "var(--text-secondary)" }}>
+                🆔 {cv.profile.permit}
+              </span>
+            )}
             <a
               href={cv.profile.linkedin}
               target="_blank"

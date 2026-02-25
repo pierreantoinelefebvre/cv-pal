@@ -4,7 +4,7 @@ import MonolithView from "./components/MonolithView";
 import MicroservicesView from "./components/MicroservicesView";
 import CanvasView from "./components/CanvasView";
 import SectionPanel from "./components/SectionPanel";
-import ExperienceDrawer from "./components/ExperienceDrawer";
+import ExperienceModal from "./components/ExperienceModal";
 import ContactForm from "./components/ContactForm";
 
 /**
@@ -99,7 +99,7 @@ export default function App() {
       )}
 
       {selectedExperience && (
-        <ExperienceDrawer
+        <ExperienceModal
           experience={selectedExperience}
           onClose={() => setSelectedExperience(null)}
         />

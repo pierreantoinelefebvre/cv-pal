@@ -59,41 +59,20 @@ body {
   background: radial-gradient(ellipse at 50% 50%, transparent 0%, var(--bg-primary) 70%);
 }
 
-/* ─── Animations ────────────────────────────────────── */
+/* ─── Animations (GPU-optimized) ────────────────────── */
 @keyframes pulse-glow {
   0%, 100% { box-shadow: 0 0 20px rgba(96,165,250,0.15), 0 0 60px rgba(96,165,250,0.05); }
   50% { box-shadow: 0 0 30px rgba(96,165,250,0.25), 0 0 80px rgba(96,165,250,0.1); }
 }
 
-@keyframes dash-flow {
-  to { stroke-dashoffset: -20; }
-}
-
-@keyframes particle-flow {
-  0% { offset-distance: 0%; opacity: 0; }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { offset-distance: 100%; opacity: 0; }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes fadeInOnly {
+@keyframes backdropEnter {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
-@keyframes slideInRight {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
-}
-
-@keyframes scaleIn {
-  from { transform: scale(0.85); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+@keyframes modalEnter {
+  from { opacity: 0; transform: scale(0.96) translateY(10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
 }
 
 /* ─── Scrollbars ────────────────────────────────────── */
@@ -111,41 +90,43 @@ body {
 }
 .canvas-container:active { cursor: grabbing; }
 
-/* ─── Drawer ────────────────────────────────────────── */
-.drawer-overlay {
+/* ─── Modal ──────────────────────────────────────────── */
+.modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(4px);
-  z-index: 100;
-  animation: fadeInOnly 0.2s ease;
+  z-index: 101;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  animation: backdropEnter 0.18s ease both;
 }
 
-.drawer {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  width: min(520px, 92vw);
+.modal-content {
+  position: relative;
+  width: min(600px, 90vw);
+  max-height: 90vh;
   background: var(--bg-secondary);
-  border-left: 1px solid var(--border-subtle);
-  z-index: 101;
-  overflow-y: auto;
-  animation: slideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+  animation: modalEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* ─── Section Panels ────────────────────────────────── */
 .section-overlay {
   position: fixed;
   inset: 0;
-  z-index: 50;
+  z-index: 150;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(10,14,23,0.92);
-  backdrop-filter: blur(12px);
-  animation: fadeInOnly 0.25s ease;
+  background: rgba(10, 14, 23, 0.88);
   padding: 20px;
+  animation: backdropEnter 0.18s ease both;
 }
 
 .section-content {
@@ -156,7 +137,7 @@ body {
   border: 1px solid var(--border-subtle);
   border-radius: 16px;
   padding: 32px;
-  animation: scaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: modalEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 @media (min-width: 640px) {
@@ -164,10 +145,10 @@ body {
 }
 
 /* ─── Utility ───────────────────────────────────────── */
-.node-hover { transition: transform 0.25s, filter 0.25s; }
+.node-hover { transition: filter 0.25s, box-shadow 0.25s; cursor: pointer; }
 .node-hover:hover {
-  transform: scale(1.05) !important;
   filter: brightness(1.15);
+  box-shadow: 0 8px 30px rgba(96,165,250,0.25) !important;
 }
 
 .skill-tag {
@@ -192,12 +173,13 @@ body {
   border-radius: 2px;
   overflow: hidden;
   margin-top: 6px;
+  contain: layout style paint;
 }
 
 .lang-fill {
   height: 100%;
   border-radius: 2px;
-  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ─── Mobile adjustments ────────────────────────────── */

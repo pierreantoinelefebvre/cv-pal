@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useMemo } from "react";
 import { useI18n } from "../hooks/useI18n";
 import { useWindowSize } from "../hooks/useWindowSize";
 import { NODE_TYPES } from "../data/constants";
@@ -19,23 +19,18 @@ export default function CanvasView({ onBack, onSelectExperience }) {
   // Ref du conteneur scrollable pour le canvas
   const containerRef = useRef(null);
 
-  // Flag pour déclencher les animations d'apparition
-  const [appeared, setAppeared] = useState(false);
-
   // Contexte i18n : données CV et textes UI
   const { cv, ui } = useI18n();
 
   // Infos responsive : isMobile pour adapter le layout
   const { isMobile } = useWindowSize();
 
-  // Déclenche les animations au montage et réinitialise scroll
+  // Réinitialise scroll au montage
   useEffect(() => {
-    const t = setTimeout(() => setAppeared(true), 100);
     if (containerRef.current) {
       containerRef.current.scrollLeft = 0;
       containerRef.current.scrollTop = 0;
     }
-    return () => clearTimeout(t);
   }, []);
 
   /**
@@ -73,9 +68,14 @@ export default function CanvasView({ onBack, onSelectExperience }) {
   const nodeH = isMobile ? 90 : 100;
   const gapX = isMobile ? 80 : 140; // Espacement horizontal
   const gapY = isMobile ? 140 : 180; // Espacement vertical
-  const startX = 80;
-  const startY = 120;
   const cols = isMobile ? 1 : 2; // Nombre de colonnes
+
+  // Calcul des positions centrées
+  const totalCols = Math.ceil(nodes.length / cols);
+  const contentW = totalCols > 0 ? (totalCols - 1) * (nodeW + gapX) + nodeW : nodeW;
+  const windowW = typeof window !== "undefined" ? window.innerWidth : 800;
+  const startX = Math.max(40, windowW / 2 - contentW / 2);
+  const startY = 120;
 
   /**
    * Calcule la position (x, y) d'un nœud basé sur son index
@@ -91,7 +91,6 @@ export default function CanvasView({ onBack, onSelectExperience }) {
   };
 
   // Dimensions totales du canvas pour les niveaux de scroll
-  const totalCols = Math.ceil(nodes.length / cols);
   const canvasW = Math.max(startX * 2 + totalCols * (nodeW + gapX), 800);
   const canvasH = startY * 2 + cols * (nodeH + gapY) + 60;
 
@@ -208,7 +207,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
             paddingTop: 60,
           }}
         >
-          {/* Group boxes */}
+          {/* Group boxes - Optimized */}
           {groupRects.map((g) => (
             <div
               key={g.id}
@@ -221,9 +220,9 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                 border: "1px dashed rgba(96,165,250,0.18)",
                 borderRadius: 16,
                 background: "rgba(96,165,250,0.02)",
-                opacity: appeared ? 1 : 0,
-                transition: "opacity 0.8s ease 0.1s",
+                opacity: 1,
                 pointerEvents: "none",
+                contain: "layout style",
               }}
             >
               {/* Group label */}
@@ -240,10 +239,12 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 11,
+                    fontSize: 13,
+                    fontWeight: 600,
                     color: "var(--accent)",
                     letterSpacing: "0.04em",
-                    opacity: 0.7,
+                    opacity: 1,
+                    textShadow: "0 2px 4px rgba(0,0,0,0.3)",
                   }}
                 >
                   📂 {g.label}
@@ -251,8 +252,9 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 10,
-                    color: "var(--text-muted)",
+                    fontSize: 11,
+                    color: "var(--text-primary)",
+                    opacity: 0.8,
                   }}
                 >
                   {g.period}
@@ -261,7 +263,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
             </div>
           ))}
 
-          {/* Connection SVG */}
+          {/* Connection SVG - Optimized */}
           <svg
             style={{
               position: "absolute",
@@ -269,54 +271,25 @@ export default function CanvasView({ onBack, onSelectExperience }) {
               width: canvasW,
               height: canvasH,
               pointerEvents: "none",
+              willChange: "auto",
             }}
           >
             {connections.map((c, i) => {
               const midX = (c.x1 + c.x2) / 2;
               const pathD = `M${c.x1},${c.y1} C${midX},${c.y1} ${midX},${c.y2} ${c.x2},${c.y2}`;
               return (
-                <g key={i}>
-                  <path
-                    d={pathD}
-                    fill="none"
-                    stroke="rgba(96,165,250,0.12)"
-                    strokeWidth="2"
-                    style={{
-                      opacity: appeared ? 1 : 0,
-                      transition: `opacity 0.5s ease ${i * 0.08}s`,
-                    }}
-                  />
-                  <path
-                    d={pathD}
-                    fill="none"
-                    stroke="rgba(96,165,250,0.3)"
-                    strokeWidth="2"
-                    strokeDasharray="6 10"
-                    style={{
-                      opacity: appeared ? 1 : 0,
-                      animation: appeared ? "dash-flow 2s linear infinite" : "none",
-                      animationDelay: `${i * 0.15}s`,
-                      transition: `opacity 0.5s ease ${i * 0.08}s`,
-                    }}
-                  />
-                  {appeared && (
-                    <circle
-                      r="3"
-                      fill="var(--accent)"
-                      style={{
-                        offsetPath: `path("${pathD}")`,
-                        animation: `particle-flow ${2 + Math.random()}s ease-in-out infinite`,
-                        animationDelay: `${i * 0.4}s`,
-                        filter: "drop-shadow(0 0 4px rgba(96,165,250,0.6))",
-                      }}
-                    />
-                  )}
-                </g>
+                <path
+                  key={i}
+                  d={pathD}
+                  fill="none"
+                  stroke="rgba(96,165,250,0.15)"
+                  strokeWidth="2"
+                />
               );
             })}
           </svg>
 
-          {/* Nodes */}
+          {/* Nodes - Optimized */}
           {nodes.map((exp, i) => {
             const pos = getNodePos(i);
             const nt = NODE_TYPES[exp.type];
@@ -338,11 +311,11 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                   border: `1px solid ${nt.border}`,
                   borderRadius: 12,
                   cursor: "pointer",
-                  opacity: appeared ? 1 : 0,
-                  transform: appeared ? "scale(1)" : "scale(0.8)",
-                  transition: `all 0.5s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.06 + 0.2}s`,
+                  opacity: 1,
+                  transform: "scale(1) translateY(0)",
                   overflow: "hidden",
                   boxShadow: `0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 ${nt.bg}`,
+                  contain: "layout style paint",
                 }}
               >
                 {/* Color bar */}
