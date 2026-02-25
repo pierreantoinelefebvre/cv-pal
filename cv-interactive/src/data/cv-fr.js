@@ -238,8 +238,8 @@ export const CV_FR = {
         },
         {
           id: "node_celine",
-          type: "loop",
-          icon: "🏁",
+          type: "transform",
+          icon: "✅",
           title: "Celine.com – LVMH",
           role: "Architecte SI",
           period: "03.2025 – 01.2026",

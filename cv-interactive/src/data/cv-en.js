@@ -236,8 +236,8 @@ export const CV_EN = {
         },
         {
           id: "node_celine",
-          type: "loop",
-          icon: "🏁",
+          type: "transform",
+          icon: "✅",
           title: "Celine.com – LVMH",
           role: "IS Architect",
           period: "03.2025 – 01.2026",
