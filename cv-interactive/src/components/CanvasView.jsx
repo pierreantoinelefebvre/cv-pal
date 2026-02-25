@@ -502,7 +502,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
           {nodes.map((exp, i) => {
             const pos = getNodePos(i);
             const nt = NODE_TYPES[exp.type];
-            const isCurrent = i === nodes.length - 1;
+            const isCurrent = i === nodes.length - 1 && !exp.isCompleted;
             return (
               <div
                 key={exp.id}

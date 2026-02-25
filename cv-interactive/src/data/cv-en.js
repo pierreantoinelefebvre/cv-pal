@@ -245,6 +245,7 @@ export const CV_EN = {
           input: "Need to migrate to a composable hybrid architecture for Celine.com (LVMH Group).",
           processing: "• Guiding and training technical teams on the implementation of a composable hybrid architecture\n• Defining integration principles and inter-application flows\n• Guarantor of technical consistency and performance of deployed solutions",
           output: "Operational composable hybrid architecture. Teams trained and autonomous on new paradigms.",
+          isCompleted: true,
         },
       ],
     },

@@ -247,6 +247,7 @@ export const CV_FR = {
           input: "Besoin de migrer vers une architecture hybride composable pour le site Celine.com du groupe LVMH.",
           processing: "• Accompagnement et formation des équipes techniques sur la mise en place d'une architecture hybride composable\n• Définition des principes d'intégration et des flux inter-applicatifs\n• Garant de la cohérence technique et de la performance des solutions déployées",
           output: "Architecture hybride composable opérationnelle. Équipes formées et autonomes sur les nouveaux paradigmes.",
+          isCompleted: true,
         },
       ],
     },
