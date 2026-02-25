@@ -28,6 +28,13 @@ export const UI_FR = {
   consultantGroup: "Missions Consultant — Codeploy Sàrl, Lausanne",
   consultantPeriod: "09.2019 – Actuellement",
   consultantDesc: "Conseil, conception et intégration de solutions IT pour le luxe",
+  workflowStart: "Manual Trigger",
+  workflowStartSub: "Début de carrière",
+  workflowEnd: "Aujourd'hui",
+  workflowEndSub: "En cours...",
+  workflowSuccess: "Exécuté avec succès",
+  workflowNodes: "nœuds",
+  workflowNow: "Actuellement",
   switchLang: "FR",
   menuNodes: {
     about: "À propos",

@@ -28,6 +28,13 @@ export const UI_EN = {
   consultantGroup: "Consultant Missions — Codeploy Sàrl, Lausanne",
   consultantPeriod: "09.2019 – Present",
   consultantDesc: "IT consulting, design & integration for luxury brands",
+  workflowStart: "Manual Trigger",
+  workflowStartSub: "Career Start",
+  workflowEnd: "Today",
+  workflowEndSub: "Running...",
+  workflowSuccess: "Executed successfully",
+  workflowNodes: "nodes",
+  workflowNow: "Present",
   switchLang: "EN",
   menuNodes: {
     about: "About",
