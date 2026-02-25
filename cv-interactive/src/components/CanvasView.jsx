@@ -196,8 +196,9 @@ export default function CanvasView({ onBack, onSelectExperience }) {
     const sPos = getNodePos(g.startIdx);
     const ePos = getNodePos(g.endIdx);
     const pad = 24;
+    const topExtra = isMobile ? 52 : 32;
     const x = Math.min(sPos.x, ePos.x) - pad;
-    const y = Math.min(sPos.y, ePos.y) - pad - 32;
+    const y = Math.min(sPos.y, ePos.y) - pad - topExtra;
     const w = Math.max(sPos.x, ePos.x) + nodeW - x + pad;
     const h = Math.max(sPos.y, ePos.y) + nodeH - y + pad + 8;
     return { ...g, x, y, w, h };
@@ -278,7 +279,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
           alignItems: "center",
           gap: 8,
           padding: isMobile ? "6px 12px" : "8px 16px",
-          background: "rgba(21,28,44,0.9)",
+          background: "var(--canvas-pill-bg)",
           border: "1px solid var(--border-subtle)",
           borderRadius: 10,
           backdropFilter: "blur(8px)",
@@ -355,9 +356,9 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                 top: g.y,
                 width: g.w,
                 height: g.h,
-                border: "1px dashed rgba(96,165,250,0.18)",
+                border: "1px dashed var(--group-box-border)",
                 borderRadius: 16,
-                background: "rgba(96,165,250,0.02)",
+                background: "var(--group-box-bg)",
                 pointerEvents: "none",
                 contain: "layout style",
               }}
@@ -368,18 +369,18 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                   top: 8,
                   left: 16,
                   display: "flex",
-                  alignItems: "center",
-                  gap: 8,
+                  flexDirection: isMobile ? "column" : "row",
+                  alignItems: isMobile ? "flex-start" : "center",
+                  gap: isMobile ? 2 : 8,
                 }}
               >
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: isMobile ? 11 : 13,
+                    fontSize: isMobile ? 10 : 13,
                     fontWeight: 600,
                     color: "var(--accent)",
                     letterSpacing: "0.04em",
-                    textShadow: "0 2px 4px rgba(0,0,0,0.3)",
                   }}
                 >
                   📂 {g.label}
@@ -387,9 +388,8 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 11,
-                    color: "var(--text-primary)",
-                    opacity: 0.8,
+                    fontSize: isMobile ? 10 : 11,
+                    color: "var(--text-secondary)",
                   }}
                 >
                   {g.period}
@@ -593,12 +593,12 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                   top: pos.y,
                   width: nodeW,
                   height: nodeH,
-                  background: "var(--bg-card)",
+                  background: nt.bg,
                   border: `1px solid ${nt.border}`,
                   borderRadius: 12,
                   cursor: "pointer",
                   overflow: "visible",
-                  boxShadow: `0 4px 20px rgba(0,0,0,0.3), inset 0 1px 0 ${nt.bg}`,
+                  boxShadow: `var(--shadow-node), inset 0 1px 0 ${nt.bg}`,
                   contain: "layout style",
                 }}
               >
@@ -612,7 +612,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                     width: 12,
                     height: 12,
                     borderRadius: "50%",
-                    background: "var(--bg-card)",
+                    background: nt.bg,
                     border: `2px solid ${nt.border}`,
                     zIndex: 2,
                   }}
@@ -628,7 +628,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                     width: 12,
                     height: 12,
                     borderRadius: "50%",
-                    background: "var(--bg-card)",
+                    background: nt.bg,
                     border: `2px solid ${nt.border}`,
                     zIndex: 2,
                   }}
@@ -904,7 +904,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
           alignItems: "center",
           gap: isMobile ? 6 : 10,
           padding: isMobile ? "6px 12px" : "8px 18px",
-          background: "rgba(21,28,44,0.95)",
+          background: "var(--canvas-status-bg)",
           border: "1px solid var(--border-subtle)",
           borderRadius: 10,
           backdropFilter: "blur(8px)",

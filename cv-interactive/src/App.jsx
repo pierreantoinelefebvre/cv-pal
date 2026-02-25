@@ -1,5 +1,6 @@
 import { useState } from "react";
 import LangSwitch from "./components/LangSwitch";
+import ThemeSwitch from "./components/ThemeSwitch";
 import MonolithView from "./components/MonolithView";
 import MicroservicesView from "./components/MicroservicesView";
 import CanvasView from "./components/CanvasView";
@@ -54,7 +55,20 @@ export default function App() {
   return (
     <>
       <div className="grid-bg" />
-      <LangSwitch />
+      <div
+        style={{
+          position: "fixed",
+          top: 16,
+          right: 16,
+          zIndex: 200,
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        <ThemeSwitch />
+        <LangSwitch />
+      </div>
 
       {view === "monolith" && <MonolithView onDeploy={handleDeploy} />}
 

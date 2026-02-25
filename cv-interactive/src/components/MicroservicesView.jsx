@@ -137,7 +137,7 @@ export default function MicroservicesView({ onSelectNode }) {
                 alignItems: "center",
                 justifyContent: "center",
                 fontSize: isMobile ? 20 : 26,
-                boxShadow: "0 4px 20px rgba(0,0,0,0.3)",
+                boxShadow: "var(--shadow-node)",
                 transition: "all 0.3s",
               }}
             >

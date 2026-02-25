@@ -34,8 +34,8 @@ export default function MonolithView({ onDeploy }) {
           maxWidth: "100%",
           padding: isMobile ? "36px 28px" : "48px 40px",
           background: hover
-            ? "linear-gradient(145deg, rgba(26,34,54,0.95), rgba(21,28,44,0.98))"
-            : "linear-gradient(145deg, rgba(21,28,44,0.95), rgba(17,24,39,0.98))",
+            ? "linear-gradient(145deg, var(--mono-card-hover-from), var(--mono-card-hover-to))"
+            : "linear-gradient(145deg, var(--mono-card-from), var(--mono-card-to))",
           border: `1px solid ${hover ? "rgba(96,165,250,0.3)" : "var(--border-subtle)"}`,
           borderRadius: 20,
           cursor: "pointer",
@@ -48,7 +48,7 @@ export default function MonolithView({ onDeploy }) {
           animation: "pulse-glow 3s ease-in-out infinite",
           boxShadow: hover
             ? "0 20px 60px rgba(96,165,250,0.15), 0 0 0 1px rgba(96,165,250,0.1)"
-            : "0 10px 40px rgba(0,0,0,0.3)",
+            : "var(--shadow-card-lg)",
         }}
       >
         {/* Avatar */}

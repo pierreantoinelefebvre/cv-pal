@@ -8,7 +8,7 @@ export default function LangSwitch() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div style={{ position: "fixed", top: 16, right: 16, zIndex: 200 }}>
+    <div style={{ position: "relative" }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         style={{
