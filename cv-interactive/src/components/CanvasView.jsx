@@ -62,7 +62,7 @@ export default function CanvasView({ onBack, onSelectExperience }) {
   const nodeW = isMobile ? 300 : 240;
   const nodeH = isMobile ? 90 : 100;
   const gapX = 140; // horizontal gap (desktop only)
-  const gapY = isMobile ? 36 : 180;
+  const gapY = isMobile ? 52 : 180;
   const specialW = isMobile ? 150 : 160;
   const specialH = isMobile ? 60 : 70;
   const startY = isMobile ? 60 : 120;
@@ -196,11 +196,12 @@ export default function CanvasView({ onBack, onSelectExperience }) {
     const sPos = getNodePos(g.startIdx);
     const ePos = getNodePos(g.endIdx);
     const pad = 24;
-    const topExtra = isMobile ? 52 : 32;
+    const topExtra = isMobile ? 10 : 32;
+    const bottomExtra = isMobile ? 8 : 8;
     const x = Math.min(sPos.x, ePos.x) - pad;
     const y = Math.min(sPos.y, ePos.y) - pad - topExtra;
     const w = Math.max(sPos.x, ePos.x) + nodeW - x + pad;
-    const h = Math.max(sPos.y, ePos.y) + nodeH - y + pad + 8;
+    const h = Math.max(sPos.y, ePos.y) + nodeH - y + pad + bottomExtra;
     return { ...g, x, y, w, h };
   });
 
@@ -368,32 +369,43 @@ export default function CanvasView({ onBack, onSelectExperience }) {
                   position: "absolute",
                   top: 8,
                   left: 16,
+                  right: 16,
                   display: "flex",
-                  flexDirection: isMobile ? "column" : "row",
-                  alignItems: isMobile ? "flex-start" : "center",
-                  gap: isMobile ? 2 : 8,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                  overflow: "hidden",
                 }}
               >
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: isMobile ? 10 : 13,
+                    fontSize: isMobile ? 9 : 13,
                     fontWeight: 600,
                     color: "var(--accent)",
                     letterSpacing: "0.04em",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    minWidth: 0,
+                    flexShrink: 1,
                   }}
                 >
                   📂 {g.label}
                 </span>
-                <span
-                  style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: isMobile ? 10 : 11,
-                    color: "var(--text-secondary)",
-                  }}
-                >
-                  {g.period}
-                </span>
+                {!isMobile && (
+                  <span
+                    style={{
+                      fontFamily: "'JetBrains Mono', monospace",
+                      fontSize: 11,
+                      color: "var(--text-secondary)",
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {g.period}
+                  </span>
+                )}
               </div>
             </div>
           ))}
